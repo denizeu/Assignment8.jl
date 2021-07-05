@@ -1,6 +1,7 @@
 module Assignment07
 
 using Base: stop_reading
+using Strings
 export normalizeDNA
 export composition
 export gc_content
