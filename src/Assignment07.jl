@@ -1,7 +1,6 @@
 module Assignment07
 
 using Base: stop_reading
-using Strings
 export normalizeDNA
 export composition
 export gc_content
@@ -135,4 +134,3 @@ function parse_fasta(path)
     return (headers, sequences)
 end
 
-end # module Assignment07
