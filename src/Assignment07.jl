@@ -2,7 +2,11 @@ module Assignment07
 
 using Base: stop_reading
 export normalizeDNA
-export composition(sequence)
+export composition
+export gc_content
+export complement
+export reverse_complement
+export parse_fasta
 # # uncomment the following line if you intend to use BioSequences types
 # using BioSequences
 
