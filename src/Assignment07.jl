@@ -72,7 +72,7 @@ end
 function gc_content(sequence)
     ng = 0
     nc = 0
-    sequence = uppercase(sequence)
+    sequence = normalizeDNA(sequence)
     for i in 1:length(sequence)
         if sequence[i] == 'G'
             ng = ng + 1
@@ -84,7 +84,7 @@ function gc_content(sequence)
 end
 
 function complement(sequence)
-    sequence = uppercase(sequence)
+    sequence = normalizeDNA(sequence)
     ret = ""
     for i in 1:length(sequence)
         if sequence[i] == 'A'
