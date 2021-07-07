@@ -112,7 +112,7 @@ function reverse_complement(sequence)
 end
 
 function parse_fasta(path)
-    headers= []
+    headers= String[]
     sequences= []
     tmp= ""
     for line in eachline(path)
