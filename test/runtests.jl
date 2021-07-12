@@ -1,7 +1,7 @@
-using Assignment07
+using Assignment8
 using Test
 
-@testset "Assignment07" begin
+@testset "Assignment8" begin
     
 @testset "Using Strings" begin
     
@@ -141,4 +141,4 @@ end # strings
 
 # end # BioSequences
 
-end # Assignment07
+end # Assignment8
