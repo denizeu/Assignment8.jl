@@ -125,7 +125,7 @@ function parse_fasta(path)
         else
             for base in line # note: `N` indicates an unknown base
                 base = uppercase(base)
-                occursin(base, "AGCTN") || error("invalid base $base")
+                occursin(base, "AGCTN") 
             end
             tmp= tmp*line
         end
