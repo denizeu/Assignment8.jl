@@ -20,7 +20,7 @@ Returns a String.
 function normalizeDNA(sequence)
     sequence = uppercase(string(sequence))
     for base in sequence # note: `N` indicates an unknown base
-        occursin(base, "AGCTN") || error("invalid base $base")
+        occursin(base, "AGCTN")
     end
     return sequence # change to `return LongDNASeq(seq)` if you want to try to use BioSequences types
 end
