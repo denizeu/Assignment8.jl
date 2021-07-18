@@ -134,4 +134,5 @@ function parse_fasta(path)
         push!(sequences, tmp)
     return (headers, sequences)
 end
+end
 
