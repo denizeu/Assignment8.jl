@@ -18,12 +18,16 @@ Ensures that a sequence only contains valid bases
 Returns a String.
 """
 function normalizeDNA(sequence)
-    sequence = uppercase(string(sequence))
+    sequence= uppercase(sequence)
+    rep = Dict('R' => 'N', 'Y' => 'N', 'S' => 'N', 'K' => 'N', 'M' => 'N', 'B' => 'N', 'D' => 'N', 'H' => 'N', 'V' => 'N', '.' => 'N', '-' => 'N', 'A' => 'A', 'G' => 'G', 'C' => 'C', 'T' => 'T', 'N' => 'N')
+    return join([rep[c] for c in sequence])
+end
+    #=sequence = uppercase(string(sequence))
     for base in sequence # note: `N` indicates an unknown base
         occursin(base, "AGCTN") || error("invalid base $base")
     end
     return sequence # change to `return LongDNASeq(seq)` if you want to try to use BioSequences types
-end
+end=#
 
 
 # Your code here.
@@ -123,14 +127,11 @@ function parse_fasta(path)
             tmp= ""
             push!(headers, SubString(line, 2))
         else
-            for base in line # note: `N` indicates an unknown base
-                base = uppercase(base)
-                occursin(base, "AGCTN") || error("invalid base $base")
-            end
+            line = normalizeDNA(line)
             tmp= tmp*line
         end
     end
         push!(sequences, tmp)
     return (headers, sequences)
 end
-end
+
