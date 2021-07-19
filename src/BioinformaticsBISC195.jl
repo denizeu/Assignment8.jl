@@ -134,5 +134,31 @@ function parse_fasta(path)
         push!(sequences, tmp)
     return (headers, sequences)
 end
+
+function uniqueKmers(sequence, k)
+    for base in sequence 
+        if !occursin(base, "ACGT")
+            error("Invalid base $base encountered")
+        end
+    end
+    1 <= k <= length(sequence) || error("k must be a positive integer less than the length of the sequence")
+    kmers = Dict()    
+    stopindex = length(sequence) - k + 1
+    ret = []
+    for i in 1:stopindex
+        kmer= sequence[i:i+k-1]
+        kmer = uppercase(kmer)
+        push!(ret, kmer)
+        if haskey(kmers, kmer) == true
+            kmers[kmer] = kmers[kmer] + 1
+        else
+            kmers[kmer] = 1
+        end
+    end
+    return Set(ret)
+end
+
+function kmerdist(set1, set2)
+    return 1 - (length(intersect(set1, set2))/length(union(set1,set2)))
 end
 
