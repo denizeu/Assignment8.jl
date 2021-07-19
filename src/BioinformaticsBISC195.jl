@@ -43,6 +43,7 @@ Examples
 """
 function normalizeDNA(sequence)
     sequence= uppercase(sequence)
+    # alternatively, `Dict(b => 'N' for b in "RYSKMBDHWV.-"), followed by `merge!(rep, Dict(b=>b for b in "ACGT"))`
     rep = Dict('R' => 'N', 'Y' => 'N', 'S' => 'N', 'K' => 'N', 'M' => 'N', 'B' => 'N', 'D' => 'N', 'H' => 'N', 'W' => 'N','V' => 'N', '.' => 'N', '-' => 'N', 'A' => 'A', 'G' => 'G', 'C' => 'C', 'T' => 'T', 'N' => 'N')
     return join([rep[c] for c in sequence])
 end
@@ -304,7 +305,7 @@ function uniqueKmers(sequence, k)
     1 <= k <= length(sequence) || error("k must be a positive integer less than the length of the sequence")
     kmers = Dict()    
     stopindex = length(sequence) - k + 1
-    ret = []
+    ret = String[] # typed stuff is usually more performant
     for i in 1:stopindex
         kmer= sequence[i:i+k-1]
         kmer = uppercase(kmer)
@@ -363,6 +364,7 @@ function kmertime(path)
     str= "" #Empty string used to hold the kmer patterns to be pushed into each time period
     for line in eachline(path)
         if header occursin("2019", path) #Findall occurrences of 2019 per header
+            # Where does `sequence` come from here?
             push!(early, uniqueKmers(sequence, k)) #If the header contains the date "2019", the kmer will be pushed into the "early" array, calling the uniqueKmer function to process how many unique kmers exist in the sequence
         end
         if header occursin("2020", path)
@@ -372,19 +374,17 @@ function kmertime(path)
             push!(late, uniqueKmers(sequence, k)) #If the header contains the date "2021", the kmer will be pushed into the "late" array
         end
     end
+end
 
+# Docstring??
 function kmertimes(path)
     kmernumba= [] #array to store the unique kmers per each time period
-        data = parse_fasta(path)
-        for i in data[2]
-             push!(kmernumba, uniqueKmers(sequence, k)) #for the data within the pos 2 of sequence data, the # of unique kmers are pushed to the array.
-        end
-        return kmernumba
+    data = parse_fasta(path)
+    for i in data[2]
+        push!(kmernumba, uniqueKmers(sequence, k)) #for the data within the pos 2 of sequence data, the # of unique kmers are pushed to the array.
     end
-
-### Kmertime Plot
-using Plots #x=time period (early, middle late), y= number of unique kmers of size "k"
-histogram(kmertimes("data/genomes_CoV2.fasta")) #creating a histogram for the time periods vs. number of unique kmers
+    return kmernumba
+end
 
 # ###10. Kmerlocation Function
 """
@@ -410,15 +410,27 @@ function kmerloc(path)
         if header occursin("Japan", path)#if Japan is located in the header, push the unique kmers to Japan's array
             push!(Ja, uniqueKmers(sequence, k))
         end
-            return Tu, Ja #return the two arrays
+        return Tu, Ja #return the two arrays
         kmerdist(Tu, Ja) #find the distance between the greatest kmerset in each (--How do i locate the greatest of each??)
-        end
-        return kmerdist #returns the distance between the two for the two countries
     end
+    return kmerdist #returns the distance between the two for the two countries
+end
 
-### Kmer Location Plot
-Plots.gr()
-x= ["Turkey", "Japan"] #x-value is location: turkey or japan
-y= [Tu, Ja] #y value holds the arrays of unique kmers 
-pie(x, y, title= "Number of Unique COVID-19 Kmers in Turkey vs. Japan") #piechart shows highest number of unique kmers for each location
+# TODO: All of the code below here should go into your analysis repo - doesn't make sense to run it here,
+# since it means the plots get created every time someone does `using BioinformaticsBISC195`
 
+### Kmertime Plot
+# TODO: You do `using Plots` here, but don't have `Plots` in the dependencies.
+# Probably, you should have Plots in your analysis repo dependencies, after you move this code
+
+# using Plots #x=time period (early, middle late), y= number of unique kmers of size "k"
+# histogram(kmertimes("data/genomes_CoV2.fasta")) #creating a histogram for the time periods vs. number of unique kmers
+
+
+# ### Kmer Location Plot
+# Plots.gr()
+# x= ["Turkey", "Japan"] #x-value is location: turkey or japan
+# y= [Tu, Ja] #y value holds the arrays of unique kmers 
+# pie(x, y, title= "Number of Unique COVID-19 Kmers in Turkey vs. Japan") #piechart shows highest number of unique kmers for each location
+
+end # module
