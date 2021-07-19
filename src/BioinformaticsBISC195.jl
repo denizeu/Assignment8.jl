@@ -9,6 +9,9 @@ export reverse_complement
 export parse_fasta
 export uniqueKmers
 export kmerdist
+export kmerloc
+export kmertime
+export kmertimes
 
 # ### 1. NormalizeDNA Function
 """
@@ -342,22 +345,80 @@ end
 
 # ###9. Kmertime Function
 """
-    function kmertimedist(sequence1, sequence2)
+    function kmertime(path)
 
-Takes two kmer sets and returns the distance and time between the kmer sets.
-
+Takes a dataset and returns three arrays of the unique kmers for early, middle, and late time periods.
 
 Example
 ≡≡≡≡≡≡≡≡≡
-    julia> kmertimedist(uniqueKmers("ATCGATG",2), uniqueKmers("GCATACC",2))
-    0.9
-    
-    julia> kmertimedist(uniqueKmers("GCGCAT",2), uniqueKmers("ATAT",2))
-    0.8
-
-    julia> kmertimedist(uniqueKmers("AATA", 4), uniqueKmers("CGGCCCG", 4))
-    1.0
+    julia> kmertime("data/fake_sample_dataset.fasta")
+    early=["ACAT", "AGAT", "CCAT"]
+    middle= ["GGTA", "AAAC", "ATAC"]
+    late= ["CGAT", "ACCA", "TATC"]
 """
+function kmertime(path)
+    early= []
+    middle= []
+    late= [] #Initializing empty arrays for 3 time periods: early(2019), middle(2020), and late(2021)
+    str= "" #Empty string used to hold the kmer patterns to be pushed into each time period
+    for line in eachline(path)
+        if header occursin("2019", path) #Findall occurrences of 2019 per header
+            push!(early, uniqueKmers(sequence, k)) #If the header contains the date "2019", the kmer will be pushed into the "early" array, calling the uniqueKmer function to process how many unique kmers exist in the sequence
+        end
+        if header occursin("2020", path)
+            push!(middle, uniqueKmers(sequence, k)) #If the header contains the date "2020", the kmer will be pushed into the "middle" array
+        end
+        if header occursin("2021", path)
+            push!(late, uniqueKmers(sequence, k)) #If the header contains the date "2021", the kmer will be pushed into the "late" array
+        end
+    end
 
-end
+function kmertimes(path)
+    kmernumba= [] #array to store the unique kmers per each time period
+        data = parse_fasta(path)
+        for i in data[2]
+             push!(kmernumba, uniqueKmers(sequence, k)) #for the data within the pos 2 of sequence data, the # of unique kmers are pushed to the array.
+        end
+        return kmernumba
+    end
+
+### Kmertime Plot
+using Plots #x=time period (early, middle late), y= number of unique kmers of size "k"
+histogram(kmertimes("data/genomes_CoV2.fasta")) #creating a histogram for the time periods vs. number of unique kmers
+
+# ###10. Kmerlocation Function
+"""
+    function kmerloc(path)
+
+Takes a dataset and returns two arrays of the unique kmers for Turkey and Japan.
+Then, it finds the distance between the two largest kmer sets in Turkey and Japan.
+
+Example
+≡≡≡≡≡≡≡≡≡
+    julia> kmerloc("data/fake_sample_dataset.fasta")
+    Tu = "ACAT", "GCGT", "AGTA"
+    Japan= "CCGT", "ATAT", "GGGC", "ACGC"
+    0.6 
+"""
+function kmerloc(path)
+    Tu= []
+    Ja= []
+    for header in eachline(path)
+        if header occursin("TUR", path) #if TUR is located in the header, push the unique kmers to Turkey's array
+            push!(Tu, uniqueKmers(sequence, k))
+        end
+        if header occursin("Japan", path)#if Japan is located in the header, push the unique kmers to Japan's array
+            push!(Ja, uniqueKmers(sequence, k))
+        end
+            return Tu, Ja #return the two arrays
+        kmerdist(Tu, Ja) #find the distance between the greatest kmerset in each (--How do i locate the greatest of each??)
+        end
+        return kmerdist #returns the distance between the two for the two countries
+    end
+
+### Kmer Location Plot
+Plots.gr()
+x= ["Turkey", "Japan"] #x-value is location: turkey or japan
+y= [Tu, Ja] #y value holds the arrays of unique kmers 
+pie(x, y, title= "Number of Unique COVID-19 Kmers in Turkey vs. Japan") #piechart shows highest number of unique kmers for each location
 

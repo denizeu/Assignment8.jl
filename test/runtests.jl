@@ -86,6 +86,28 @@ using Test
         @test kmerdist(uniqueKmers("GCGCAT",2), uniqueKmers("ATAT",2)) == 0.8
         @test kmerdist(uniqueKmers("ATCGATG",2), uniqueKmers("GCATACC",2)) == 0.9
     end
+
+    @testset "kmertime" begin
+        genomes = joinpath(testpath, "cov2_genomes.fasta")
+        ex1_path = joinpath(testpath, "ex1.fasta")
+        ex2_path = joinpath(testpath, "ex2.fasta")
+
+        ex1 = kmertime(ex1_path)
+        @test ex1 isa Tuple
+        @test all(x-> x isa String, ex1[1])
+        @test all(x-> x isa String, ex1[2])
+    end
+
+    @testset "kmertimes" begin
+        path= "AT", "GC", "AC"
+        @test kmertimes(path) == 3
+    end
+
+    @testset "kmerloc" begin
+        Tu= ["ACTA", "AGCT"]
+        Japan= ["AGAT", "CCTA", "CCTG"]
+        @test kmerloc(path)= Tu=2, Japan=3
+    end
 end
 end
 
