@@ -161,4 +161,5 @@ end
 function kmerdist(set1, set2)
     return 1 - (length(intersect(set1, set2))/length(union(set1,set2)))
 end
+end
 
