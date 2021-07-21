@@ -280,7 +280,10 @@ end
     Examples
     ≡≡≡≡≡≡≡≡≡≡
         julia> lengthcount("data/example.fasta")
-        "AAAGGT"
+        (44806.2566948847, 45.93354112164542, 0.7767768512386324, 0.00047821765440753630)
+
+        julia> lengthcount("data/example.fasta")
+        (25714.4156356907, 68.78024813244301, 0.3631206332359013, 0.00021470921328415272)
     """
 function lengthcount(path)
     lengths= []
@@ -297,12 +300,45 @@ function lengthcount(path)
 end
 
 # ### Minimum and Maximum Function
+"""
+    lengthcount(path)
 
+    Takes data and returns the minimum and maximum of sequence lengths.
+    
+    Takes lowercase or uppercase sequences,
+    but always returns uppercase.
+    
+    Examples
+    ≡≡≡≡≡≡≡≡≡≡
+        julia> minMax("data/ex1.fasta")
+        (9, 17)
+    """
 function minMax(path)
     ret = parse_fasta(path)[2]
     retmin = length(minimum(ret))
     retmax = length(maximum(ret))
     return (retmin, retmax)
+end
+
+# ### Sequence Lengths Function
+"""
+    lengthcount(path)
+
+    Takes data and returns the sequence lengths.
+
+    Examples
+    ≡≡≡≡≡≡≡≡≡≡
+        julia> seqlength("data/ex1.fasta")
+        9
+        17
+    """
+function seqlength(path)
+    lengths = []
+    data = parse_fasta(path)
+    for i in data[2]
+         push!(lengths, length(i))
+    end
+    return lengths
 end
 
 # ### Unique Kmer Function
