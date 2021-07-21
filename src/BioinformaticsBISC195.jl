@@ -390,7 +390,6 @@ function uniqueKmers(sequence, k)
     end
     return Set(ret)
 end
-end
 
 
 
@@ -418,6 +417,7 @@ Example
 """
 function kmerdist(set1, set2)
     return 1 - (length(intersect(set1, set2))/length(union(set1,set2)))
+end
 end
 
 #= # ###9. Kmertime Function
