@@ -357,7 +357,7 @@ end
 
 
 
-### 8. KmerDistance Function
+#=### 8. KmerDistance Function
 """
     function kmerdist(set1, set2)
 
@@ -461,5 +461,5 @@ end
 Plots.gr()
 x= ["Turkey", "Japan"] #x-value is location: turkey or japan
 y= [Tu, Ja] #y value holds the arrays of unique kmers 
-pie(x, y, title= "Number of Unique COVID-19 Kmers in Turkey vs. Japan") #piechart shows highest number of unique kmers for each location
+pie(x, y, title= "Number of Unique COVID-19 Kmers in Turkey vs. Japan") #piechart shows highest number of unique kmers for each location=#
 
