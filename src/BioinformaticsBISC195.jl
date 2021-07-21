@@ -317,8 +317,9 @@ function uniqueKmers(sequence, k)
     end
     return Set(ret)
 end
+end
 
-# ### 8. KmerDistance Function
+#=# ### 8. KmerDistance Function
 """
     function kmerdist(set1, set2)
 
@@ -415,8 +416,8 @@ function kmerloc(path)
         end
         return kmerdist #returns the distance between the two for the two countries
     end
-end
-end
+end=#
+
 #= ### Kmer Location Plot
 Plots.gr()
 x= ["Turkey", "Japan"] #x-value is location: turkey or japan
