@@ -355,6 +355,8 @@ function uniqueKmers(sequence, k)
     return Set(ret)
 end
 
+end
+
 
 
 #=### 8. KmerDistance Function
