@@ -354,8 +354,8 @@ function uniqueKmers(sequence, k)
     end
     return Set(ret)
 end
-
 end
+
 
 
 
