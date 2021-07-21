@@ -395,7 +395,7 @@ end
 
 
 
-#=### 8. KmerDistance Function
+ # ### 8. KmerDistance Function
 """
     function kmerdist(set1, set2)
 
@@ -420,7 +420,7 @@ function kmerdist(set1, set2)
     return 1 - (length(intersect(set1, set2))/length(union(set1,set2)))
 end
 
-# ###9. Kmertime Function
+#= # ###9. Kmertime Function
 """
     function kmertime(path)
 
@@ -493,7 +493,6 @@ function kmerloc(path)
         end
         return kmerdist #returns the distance between the two for the two countries
     end
-end
 
  ### Kmer Location Plot
 Plots.gr()
