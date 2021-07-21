@@ -268,7 +268,44 @@ function parse_fasta(path)
     return (headers, sequences)
 end
 
-# ### 7. Unique Kmer Function
+# ### Mean Lengths and Counts
+"""
+    lengthcount(path)
+
+    Takes data and returns the mean and standard deviation of sequence lengths and of gc content.
+    
+    Takes lowercase or uppercase sequences,
+    but always returns uppercase.
+    
+    Examples
+    ≡≡≡≡≡≡≡≡≡≡
+        julia> lengthcount("data/example.fasta")
+        "AAAGGT"
+    """
+function lengthcount(path)
+    lengths= []
+    counts=[]
+    data= parse_fasta(path)
+    for i in data[2]
+        push!(lengths, length(i))
+        gs = count(==('G'), i)
+        cs = count(==('C'), i)
+        GCcontent= (gs + cs)/length(i)
+        push!(counts, GCcontent)
+    end
+    return (mean(lengths), std(lengths), mean(counts), std(counts))
+end
+
+# ### Minimum and Maximum Function
+
+function minMax(path)
+    ret = parse_fasta(path)[2]
+    retmin = length(minimum(ret))
+    retmax = length(maximum(ret))
+    return (retmin, retmax)
+end
+
+# ### Unique Kmer Function
 """
     function uniqueKmers(sequence, k)
 
@@ -313,13 +350,14 @@ function uniqueKmers(sequence, k)
             kmers[kmer] = kmers[kmer] + 1
         else
             kmers[kmer] = 1
-        end
+    end
     end
     return Set(ret)
 end
-end
 
-#=# ### 8. KmerDistance Function
+
+
+### 8. KmerDistance Function
 """
     function kmerdist(set1, set2)
 
@@ -373,6 +411,7 @@ function kmertime(path)
             push!(late, uniqueKmers(sequence, k)) #If the header contains the date "2021", the kmer will be pushed into the "late" array
         end
     end
+end
 
 function kmertimes(path)
     kmernumba= [] #array to store the unique kmers per each time period
@@ -381,7 +420,7 @@ function kmertimes(path)
              push!(kmernumba, uniqueKmers(sequence, k)) #for the data within the pos 2 of sequence data, the # of unique kmers are pushed to the array.
         end
         return kmernumba
-    end
+end
 
 ### Kmertime Plot
 using Plots #x=time period (early, middle late), y= number of unique kmers of size "k"
@@ -416,11 +455,11 @@ function kmerloc(path)
         end
         return kmerdist #returns the distance between the two for the two countries
     end
-end=#
+end
 
-#= ### Kmer Location Plot
+ ### Kmer Location Plot
 Plots.gr()
 x= ["Turkey", "Japan"] #x-value is location: turkey or japan
 y= [Tu, Ja] #y value holds the arrays of unique kmers 
-pie(x, y, title= "Number of Unique COVID-19 Kmers in Turkey vs. Japan") #piechart shows highest number of unique kmers for each location=#
+pie(x, y, title= "Number of Unique COVID-19 Kmers in Turkey vs. Japan") #piechart shows highest number of unique kmers for each location
 
