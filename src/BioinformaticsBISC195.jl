@@ -394,7 +394,7 @@ end
 
 
 
- # ### 8. KmerDistance Function
+# ### 8. KmerDistance Function
 """
     function kmerdist(set1, set2)
 
