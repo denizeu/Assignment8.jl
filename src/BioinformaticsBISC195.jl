@@ -416,6 +416,7 @@ function kmerloc(path)
         return kmerdist #returns the distance between the two for the two countries
     end
 end
+end
 #= ### Kmer Location Plot
 Plots.gr()
 x= ["Turkey", "Japan"] #x-value is location: turkey or japan
