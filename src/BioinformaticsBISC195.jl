@@ -364,26 +364,15 @@ Example
     "CT"
 """
 function uniqueKmers(sequence, k)
-    for base in sequence 
-        if !occursin(base, "ACGTN")
-            error("Invalid base $base encountered")
-        end
-    end
     1 <= k <= length(sequence) || error("k must be a positive integer less than the length of the sequence")
-    kmers = Dict()    
+    kmers = Set{String}()    
     stopindex = length(sequence) - k + 1
-    ret = []
     for i in 1:stopindex
         kmer= sequence[i:i+k-1]
         kmer = uppercase(kmer)
-        push!(ret, kmer)
-        if haskey(kmers, kmer) == true
-            kmers[kmer] = kmers[kmer] + 1
-        else
-            kmers[kmer] = 1
-        end
+        push!(kmers, kmer)
     end
-    return collect(Set(ret))
+    return kmers
 end
 # ### Sorting Sequences to 5%
 """
@@ -446,14 +435,15 @@ Example
     early=["ACAT", "AGAT", "CCAT"]
     middle= ["GGTA", "AAAC", "ATAC"]
     late= ["CGAT", "ACCA", "TATC"]
+
+    julia> headers, sequences = parse_fasta("data/example.fasta")
+
+    julia> kmertime(headers, sequences)
 """
-function kmertime(path) #whatto set k to?
-    k = 40
+function kmertime(headers, sequences, k=3) #whatto set k to?
     early= []
     middle= []
     late= [] #Initializing empty arrays for 3 time periods: early(2019), middle(2020), and late(2021)
-    headers = parse_fasta(path)[1]  
-    sequences = parse_fasta(path)[2] 
     for i in 1:length(sequences)
         if occursin("2019", headers[i]) #Findall occurrences of 2019 per header
             push!(early, uniqueKmers(sequences[i], k)) #If the header contains the date "2019", the kmer will be pushed into the "early" array, calling the uniqueKmer function to process how many unique kmers exist in the sequence
@@ -468,28 +458,17 @@ function kmertime(path) #whatto set k to?
     return (early, middle, late)
 end
 
-function kmertimes(path)
-    early = length(kmertime(path)[1])
-    middle = length(kmertime(path)[2])
-    late = length(kmertime(path)[3])
-    cptearly = 0 
-    cptmiddle = 0 
-    cptlate = 0
-    for i in 1:early 
-        cptearly = cptearly + 1
-    end
-    for i in 1:middle
-        cptmiddle  = cptmiddle + 1
-    end
-    for i in 1:late
-        cptlate  = cptlate + 1
-    end
-    return(cptearly, cptmiddle, cptlate)
+function kmertimes(headers, sequences)
+    early, middle, late = kmertime(headers, sequences)
+    early_kmers = length(union(early...))
+    middle_kmers = length(union(middle...))
+    late_kmers = length(union(late...))
+    return(early_kmers, middle_kmers, late_kmers)
 end
 
 ### Kmertime Plot
-using Plots #x=time period (early, middle late), y= number of unique kmers of size "k"
-histogram(kmertimes("data/genomes_CoV2.fasta")) #creating a histogram for the time periods vs. number of unique kmers
+#using Plots #x=time period (early, middle late), y= number of unique kmers of size "k"
+#boxplot(kmertimes("data/genomes_CoV2.fasta")) #creating a histogram for the time periods vs. number of unique kmers
 
 # ###10. Kmerlocation Function
 """
@@ -522,8 +501,8 @@ function kmerloc(path)
     end
 
  ### Kmer Location Plot
-Plots.gr()
-x= ["Turkey", "Japan"] #x-value is location: turkey or japan
-y= [Tu, Ja] #y value holds the arrays of unique kmers 
-pie(x, y, title= "Number of Unique COVID-19 Kmers in Turkey vs. Japan") #piechart shows highest number of unique kmers for each location=#
+#Plots.gr()
+#x= ["Turkey", "Japan"] #x-value is location: turkey or japan
+#y= [Tu, Ja] #y value holds the arrays of unique kmers 
+#pie(x, y, title= "Number of Unique COVID-19 Kmers in Turkey vs. Japan") #piechart shows highest number of unique kmers for each location=#
 
