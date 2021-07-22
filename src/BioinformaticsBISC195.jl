@@ -420,7 +420,6 @@ Example
 function kmerdist(set1, set2)
     return 1 - (length(intersect(set1, set2))/length(union(set1,set2)))
 end
-end
 
 
  # ###9. Kmertime Function
@@ -436,7 +435,7 @@ Example
     middle= ["GGTA", "AAAC", "ATAC"]
     late= ["CGAT", "ACCA", "TATC"]
 
-    julia> headers, sequences = parse_fasta("data/example.fasta")
+    julia> headers, sequences = parse_fasta("data/example.fasta");
 
     julia> kmertime(headers, sequences)
 """
@@ -484,7 +483,7 @@ Example
     Japan= "CCGT", "ATAT", "GGGC", "ACGC"
     0.6 
 """
-function kmerloc(path)
+#=function kmerloc(path)
     Tu= []
     Ja= []
     for header in eachline(path)
@@ -498,7 +497,7 @@ function kmerloc(path)
         kmerdist(Tu, Ja) #find the distance between the greatest kmerset in each (--How do i locate the greatest of each??)
         end
         return kmerdist #returns the distance between the two for the two countries
-    end
+    end=#
 
  ### Kmer Location Plot
 #Plots.gr()
