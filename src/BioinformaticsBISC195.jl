@@ -113,19 +113,17 @@ Examples
 
     julia> gc_content("ATty")
     0.0
+    
+    julia> gc_content("GGCCNNNN")
+    1.0
 """
 function gc_content(sequence)
-    ng = 0
-    nc = 0
-    sequence = normalizeDNA(sequence)
-    for i in 1:length(sequence)
-        if sequence[i] == 'G'
-            ng = ng + 1
-        elseif sequence[i] == 'C'
-            nc = nc + 1
-        end
-    end
-    return (ng + nc) / length(sequence)
+    comp = composition(sequence)
+    ng = get(comp, 'G', 0) #etc
+    nc = get(comp, 'C', 0)
+    na= get(comp, 'A', 0)
+    nt= get(comp, 'T', 0)
+    return (ng + nc) / (ng + nc + nt + na) #divided by sum of AGCT w/ composition function
 end
 
 # ###4. Complement Function
@@ -287,7 +285,7 @@ end
     """
 function lengthcount(path)
     lengths= []
-    counts=[]
+    counts= []
     data= parse_fasta(path)
     for i in data[2]
         push!(lengths, length(i))
@@ -301,12 +299,9 @@ end
 
 # ### Minimum and Maximum Function
 """
-    lengthcount(path)
+    minMax(path)
 
     Takes data and returns the minimum and maximum of sequence lengths.
-    
-    Takes lowercase or uppercase sequences,
-    but always returns uppercase.
     
     Examples
     ≡≡≡≡≡≡≡≡≡≡
@@ -370,7 +365,7 @@ Example
 """
 function uniqueKmers(sequence, k)
     for base in sequence 
-        if !occursin(base, "ACGT")
+        if !occursin(base, "ACGTN")
             error("Invalid base $base encountered")
         end
     end
@@ -386,12 +381,30 @@ function uniqueKmers(sequence, k)
             kmers[kmer] = kmers[kmer] + 1
         else
             kmers[kmer] = 1
+        end
     end
-    end
-    return Set(ret)
+    return collect(Set(ret))
 end
+# ### Sorting Sequences to 5%
+"""
+    function sorting(path)
 
+Takes a path and returns a vector with the sequence lengths greater than 29500.
 
+Example
+≡≡≡≡≡≡≡≡≡
+    julia> sorting(path)
+    Set{Any} with 5 elements:
+
+"""
+function sorting(path)
+    sequences = seqlength(path)
+    headers = parse_fasta(path)[1]
+    check = findall(x->x<29500, sequences)
+    deleteat!(sequences, check)
+    deleteat!(headers, check)
+    return (sequences, headers)
+end
 
 
 # ### 8. KmerDistance Function
@@ -420,7 +433,8 @@ function kmerdist(set1, set2)
 end
 end
 
-#= # ###9. Kmertime Function
+
+ # ###9. Kmertime Function
 """
     function kmertime(path)
 
@@ -433,31 +447,44 @@ Example
     middle= ["GGTA", "AAAC", "ATAC"]
     late= ["CGAT", "ACCA", "TATC"]
 """
-function kmertime(path)
+function kmertime(path) #whatto set k to?
+    k = 40
     early= []
     middle= []
     late= [] #Initializing empty arrays for 3 time periods: early(2019), middle(2020), and late(2021)
-    str= "" #Empty string used to hold the kmer patterns to be pushed into each time period
-    for line in eachline(path)
-        if header occursin("2019", path) #Findall occurrences of 2019 per header
-            push!(early, uniqueKmers(sequence, k)) #If the header contains the date "2019", the kmer will be pushed into the "early" array, calling the uniqueKmer function to process how many unique kmers exist in the sequence
+    headers = parse_fasta(path)[1]  
+    sequences = parse_fasta(path)[2] 
+    for i in 1:length(sequences)
+        if occursin("2019", headers[i]) #Findall occurrences of 2019 per header
+            push!(early, uniqueKmers(sequences[i], k)) #If the header contains the date "2019", the kmer will be pushed into the "early" array, calling the uniqueKmer function to process how many unique kmers exist in the sequence
         end
-        if header occursin("2020", path)
-            push!(middle, uniqueKmers(sequence, k)) #If the header contains the date "2020", the kmer will be pushed into the "middle" array
+        if occursin("2020", headers[i])
+            push!(middle, uniqueKmers(sequences[i], k)) #If the header contains the date "2020", the kmer will be pushed into the "middle" array
         end
-        if header occursin("2021", path)
-            push!(late, uniqueKmers(sequence, k)) #If the header contains the date "2021", the kmer will be pushed into the "late" array
+        if occursin("2021", headers[i])
+            push!(late, uniqueKmers(sequences[i], k)) #If the header contains the date "2021", the kmer will be pushed into the "late" array
         end
     end
+    return (early, middle, late)
 end
 
 function kmertimes(path)
-    kmernumba= [] #array to store the unique kmers per each time period
-        data = parse_fasta(path)
-        for i in data[2]
-             push!(kmernumba, uniqueKmers(sequence, k)) #for the data within the pos 2 of sequence data, the # of unique kmers are pushed to the array.
-        end
-        return kmernumba
+    early = length(kmertime(path)[1])
+    middle = length(kmertime(path)[2])
+    late = length(kmertime(path)[3])
+    cptearly = 0 
+    cptmiddle = 0 
+    cptlate = 0
+    for i in 1:early 
+        cptearly = cptearly + 1
+    end
+    for i in 1:middle
+        cptmiddle  = cptmiddle + 1
+    end
+    for i in 1:late
+        cptlate  = cptlate + 1
+    end
+    return(cptearly, cptmiddle, cptlate)
 end
 
 ### Kmertime Plot
