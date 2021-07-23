@@ -80,9 +80,12 @@ using Test
         @test uniqueKmers("ACT", 2) == Set(["AC", "CT"])
         @test uniqueKmers("ATC", 2) == Set(["AT", "TC"])
         @test uniqueKmers("ATGCGATG", 4) ==  Set(["TGCG", "ATGC", "GATG", "CGAT", "GCGA"])
+
+        @test_throws Exception uniqueKmers("XAQ", 2)
         end
 
     @testset "kmerdist" begin
+        @test kmerdist(uniqueKmers("GCGCAT",2), uniqueKmers("ATAT",2)) isa Float64
         @test kmerdist(uniqueKmers("GCGCAT",2), uniqueKmers("ATAT",2)) == 0.8
         @test kmerdist(uniqueKmers("ATCGATG",2), uniqueKmers("GCATACC",2)) == 0.9
     end
@@ -92,6 +95,7 @@ using Test
         genomes = joinpath(testpath, "cov2_genomes.fasta")
         ex1_path = joinpath(testpath, "ex1.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
+        datatry_path= joinpath(testpath, "datatry.fasta")
     
 
         ex1 = kmertime(parse_fasta(ex1_path)[1], parse_fasta(ex1_path)[2], 3)
@@ -99,19 +103,27 @@ using Test
         @test all(x-> x isa String, ex1[1])
         @test all(x-> x isa String, ex1[2])
 
-
+        datatry= kmertime(parse_fasta(datatry_path)[1], parse_fasta(datatry_path)[2], 2)
+        @test datatry== (Any[Set(["AC", "CT"])], Any[Set(["CC", "GC", "GG", "CG", "AT", "CA", "TG", "TA", "GT", "GA", "TT", "AC", "CT", "AA", "AG", "TC"])], Any[Set(["AG", "GG", "GT"])]) 
     end
 
     @testset "kmertimes" begin
-        path= "AT", "GC", "AC"
-        @test kmertimes(path) == 3
+        testpath = normpath(joinpath(@__DIR__, "data"))
+        ex1_path = joinpath(testpath, "ex1.fasta")
+        headers, sequences = parse_fasta("data/refined_data.fasta");
+
+        @test kmertimes(headers, sequences) isa Tuple{Int64, Int64, Int64}
+
+        @test kmertimes(headers, sequences) == (64, 73, 95)
+
+        @test_throws Exception kmertimes(parse_fasta(ex1_path)[1], parse_fasta(ex1_path)[2])
     end
 
-    @testset "kmerloc" begin
-        Tu= ["ACTA", "AGCT"]
-        Japan= ["AGAT", "CCTA", "CCTG"]
-        @test kmerloc(path)= Tu=2, Japan=3
+    @testset "pairdist" begin
+        
     end
+
+    @testset "distsort" begin
 end
 end
 

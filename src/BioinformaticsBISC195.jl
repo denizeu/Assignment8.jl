@@ -14,6 +14,8 @@ export kmertime
 export kmertimes
 export lengthcount
 export minMax
+export pairdist
+export distsort
 
 # ### 1. NormalizeDNA Function
 """
@@ -366,6 +368,7 @@ Example
     "CT"
 """
 function uniqueKmers(sequence, k)
+    sequence= normalizeDNA(sequence)
     1 <= k <= length(sequence) || error("k must be a positive integer less than the length of the sequence")
     kmers = Set{String}()    
     stopindex = length(sequence) - k + 1
@@ -440,7 +443,7 @@ Example
 
     julia> kmertime(headers, sequences)
 """
-function kmertime(headers, sequences, k=7) #whatto set k to?
+function kmertime(headers, sequences, k=3) #whatto set k to?
     early= []
     middle= []
     late= [] #Initializing empty arrays for 3 time periods: early(2019), middle(2020), and late(2021)
@@ -469,7 +472,7 @@ Example
 
     julia> headers, sequences = parse_fasta("data/example.fasta");
 
-    julia> kmertime(headers, sequences)
+    julia> kmertimes(headers, sequences)
 
     julia> (5, 6, 8)
 """
@@ -538,7 +541,6 @@ function distsort(mat)
     return (early_dist, middle_dist, late_dist)
 end
 end
-
 
         
 
