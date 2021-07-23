@@ -423,8 +423,7 @@ function kmerdist(set1, set2)
     return 1 - (length(intersect(set1, set2))/length(union(set1,set2)))
 end
 
-
- # ###9. Kmertime Function
+# ###9. Kmertime Function
 """
     function kmertime(path)
 
@@ -459,6 +458,21 @@ function kmertime(headers, sequences, k=3) #whatto set k to?
     return (early, middle, late)
 end
 
+# ###Kmertimes Function
+"""
+    function kmertimes(path)
+
+    Takes a dataset and returns an array of the number of unique kmers within early, middle, and late time periods.
+
+Example
+≡≡≡≡≡≡≡≡≡
+
+    julia> headers, sequences = parse_fasta("data/example.fasta");
+
+    julia> kmertime(headers, sequences)
+
+    julia> (5, 6, 8)
+"""
 function kmertimes(headers, sequences)
     early, middle, late = kmertime(headers, sequences) 
     early_kmers = length(union(early...))
@@ -474,8 +488,9 @@ end
 # ###10. Pairwise Distance Function
 """
     function pairdist(path)
-
-
+    
+    Takes a dataset and initiates a matrix for sequences.
+    Returns the distance between pairs of sequences.
 
 Example
 ≡≡≡≡≡≡≡≡≡
