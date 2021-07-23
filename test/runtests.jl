@@ -98,7 +98,8 @@ using Test
         @test all(x-> x isa String, ex1[1])
         @test all(x-> x isa String, ex1[2])
 
-        @test ex1
+        final_data = kmertime(parse_fasta(ex1_path)[1], parse_fasta(ex1_path)[2], 4)
+        @test final_data
     end
 
     @testset "kmertimes" begin
