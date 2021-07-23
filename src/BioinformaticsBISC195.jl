@@ -537,8 +537,7 @@ function distsort(mat)
     end
     return (early_dist, middle_dist, late_dist)
 end
-
-
+end
 
 
         
