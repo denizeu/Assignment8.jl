@@ -440,7 +440,7 @@ Example
 
     julia> kmertime(headers, sequences)
 """
-function kmertime(headers, sequences, k=3) #whatto set k to?
+function kmertime(headers, sequences, k=7) #whatto set k to?
     early= []
     middle= []
     late= [] #Initializing empty arrays for 3 time periods: early(2019), middle(2020), and late(2021)
@@ -480,7 +480,7 @@ function kmertimes(headers, sequences)
     late_kmers = length(union(late...))
     return(early_kmers, middle_kmers, late_kmers)
 end
-end
+
 ### Kmertime Plot
 #using Plots #x=time period (early, middle late), y= number of unique kmers of size "k"
 #boxplot(kmertimes("data/genomes_CoV2.fasta")) #creating a histogram for the time periods vs. number of unique kmers
@@ -499,62 +499,52 @@ Example
 
 """
 # i is row-, j is column|
-function pairdist(headers, sequences)
-    setupmatrix = zeros(Int, length(sequences), length(sequences))
-    for j in 1:length(sequence)
-        setupmatrix[1, j] = (sequences[j])
-    end
-    return setupmatrix
-end
-#=
-    for j in 1:length(sequences) #for loop for the column
-        setupmatrix[1, j] = kmerdist(j, i) #kmer distance is the kmerdistance between the column and row values?
-    return setupmatrix
-    for i in 1:length(sequences)
-        setupmatrix[i,1] = kmerdist(i, j)
-    end
-    return setupmatrix
-end
-end=#
-#=store= []
-push!(store, parse_fasta(path)[2])=#
-#=function pairdist(path) #need to create storage for the same sequences twice to?
-    h = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[1]
-    j = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[2]
-    k = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[3]
+function pairdist(path) 
+    h = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 7)[1]
+    j = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 7)[2]
+    k = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 7)[3]
     mesh = vcat(h,j,k)
-    ret = [mesh mesh]
-    real = ret
-    for i in 1:length(ret)
-            real[i] = kmerdist(uniqueKmers(ret[i], 3), uniqueKmers(ret[i], 3))
-
-      
+    ret = zeros(36, 36)
+    for i in 1:36
+        for j in 1:36
+            i <= j && continue 
+            d = kmerdist(mesh[i], mesh[j])
+            ret[i, j] = d
+        end
     end
+    return ret 
+end
 
-
-    return real
+### Distance Sort
+function distsort(mat)
+    early_dist = []
+    middle_dist = []
+    late_dist = []
+    for i in 1:12
+        for j in 1:12 
+            push!(early_dist, mat[i,j])
+        end
     end
-=#
-
-
-#=function pairdist(path)
-    h = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[1]
-    j = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[2]
-    k = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[3]
-    mesh = vcat(h,j,k)
-    ret = [mesh mesh]
-    real = ret
-    for i in 1:length(ret)
-            real[i] = kmerdist(uniqueKmers(ret[i], 3), uniqueKmers(ret[i], 3))
-
-      
+    for i in 13:24 
+        for j in 13:24
+            push!(middle_dist, mat[i,j])
+        end
     end
+    for i in 25:36 
+        for j in 25:36
+            push!(late_dist, mat[i,j])
+        end
+    end
+    return (early_dist, middle_dist, late_dist)
+end
 
 
-    return real
-    end=#
 
-    #kmerdist(uniqueKmers(ret[i][j], 3), uniqueKmers(ret[i][j], 3))
+
+        
+
+
+
 
 
  ### Kmer Location Plot
