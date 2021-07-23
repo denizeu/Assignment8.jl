@@ -77,9 +77,9 @@ using Test
         end #parse_fasta
 
     @testset "uniqueKmers" begin
-        @test uniqueKmers("ACT", 2) == ["AC", "CT"]
-        @test uniqueKmers("ATC", 2) == ["AT", "TC"]
-        @test uniqueKmers("ATGCGATG", 4) ==  ["TGCG", "ATGC", "GATG", "CGAT", "GCGA"]
+        @test uniqueKmers("ACT", 2) == Set(["AC", "CT"])
+        @test uniqueKmers("ATC", 2) == Set(["AT", "TC"])
+        @test uniqueKmers("ATGCGATG", 4) ==  Set(["TGCG", "ATGC", "GATG", "CGAT", "GCGA"])
         end
 
     @testset "kmerdist" begin
