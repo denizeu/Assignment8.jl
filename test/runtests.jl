@@ -120,6 +120,10 @@ using Test
     end
 
     @testset "pairdist" begin
+        testpath = normpath(joinpath(@__DIR__, "data"))
+        refine_path = joinpath(testpath, "refined_data.fasta")
+
+        @test pairdist(refine_path) isa Matrix{Float64} 
         
     end
 
