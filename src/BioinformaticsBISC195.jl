@@ -12,6 +12,8 @@ export kmerdist
 export kmerloc
 export kmertime
 export kmertimes
+export lengthcount
+export minMax
 
 # ### 1. NormalizeDNA Function
 """
@@ -268,14 +270,14 @@ end
 
 # ### Mean Lengths and Counts
 """
-    lengthcount(path)
+    function lengthcount(path)
 
     Takes data and returns the mean and standard deviation of sequence lengths and of gc content.
     
     Takes lowercase or uppercase sequences,
     but always returns uppercase.
     
-    Examples
+    Example
     ≡≡≡≡≡≡≡≡≡≡
         julia> lengthcount("data/example.fasta")
         (44806.2566948847, 45.93354112164542, 0.7767768512386324, 0.00047821765440753630)
@@ -458,46 +460,87 @@ function kmertime(headers, sequences, k=3) #whatto set k to?
 end
 
 function kmertimes(headers, sequences)
-    early, middle, late = kmertime(headers, sequences)
+    early, middle, late = kmertime(headers, sequences) 
     early_kmers = length(union(early...))
     middle_kmers = length(union(middle...))
     late_kmers = length(union(late...))
     return(early_kmers, middle_kmers, late_kmers)
 end
-
+end
 ### Kmertime Plot
 #using Plots #x=time period (early, middle late), y= number of unique kmers of size "k"
 #boxplot(kmertimes("data/genomes_CoV2.fasta")) #creating a histogram for the time periods vs. number of unique kmers
 
-# ###10. Kmerlocation Function
+# ###10. Pairwise Distance Function
 """
-    function kmerloc(path)
+    function pairdist(path)
 
-Takes a dataset and returns two arrays of the unique kmers for Turkey and Japan.
-Then, it finds the distance between the two largest kmer sets in Turkey and Japan.
+
 
 Example
 ≡≡≡≡≡≡≡≡≡
-    julia> kmerloc("data/fake_sample_dataset.fasta")
-    Tu = "ACAT", "GCGT", "AGTA"
-    Japan= "CCGT", "ATAT", "GGGC", "ACGC"
-    0.6 
+    julia> headers, sequences = parse_fasta("data/refined_data.fasta");
+
+
 """
-#=function kmerloc(path)
-    Tu= []
-    Ja= []
-    for header in eachline(path)
-        if header occursin("TUR", path) #if TUR is located in the header, push the unique kmers to Turkey's array
-            push!(Tu, uniqueKmers(sequence, k))
-        end
-        if header occursin("Japan", path)#if Japan is located in the header, push the unique kmers to Japan's array
-            push!(Ja, uniqueKmers(sequence, k))
-        end
-            return Tu, Ja #return the two arrays
-        kmerdist(Tu, Ja) #find the distance between the greatest kmerset in each (--How do i locate the greatest of each??)
-        end
-        return kmerdist #returns the distance between the two for the two countries
+# i is row-, j is column|
+function pairdist(headers, sequences)
+    setupmatrix = zeros(Int, length(sequences), length(sequences))
+    for j in 1:length(sequence)
+        setupmatrix[1, j] = (sequences[j])
+    end
+    return setupmatrix
+end
+#=
+    for j in 1:length(sequences) #for loop for the column
+        setupmatrix[1, j] = kmerdist(j, i) #kmer distance is the kmerdistance between the column and row values?
+    return setupmatrix
+    for i in 1:length(sequences)
+        setupmatrix[i,1] = kmerdist(i, j)
+    end
+    return setupmatrix
+end
+end=#
+#=store= []
+push!(store, parse_fasta(path)[2])=#
+#=function pairdist(path) #need to create storage for the same sequences twice to?
+    h = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[1]
+    j = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[2]
+    k = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[3]
+    mesh = vcat(h,j,k)
+    ret = [mesh mesh]
+    real = ret
+    for i in 1:length(ret)
+            real[i] = kmerdist(uniqueKmers(ret[i], 3), uniqueKmers(ret[i], 3))
+
+      
+    end
+
+
+    return real
+    end
+=#
+
+
+#=function pairdist(path)
+    h = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[1]
+    j = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[2]
+    k = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[3]
+    mesh = vcat(h,j,k)
+    ret = [mesh mesh]
+    real = ret
+    for i in 1:length(ret)
+            real[i] = kmerdist(uniqueKmers(ret[i], 3), uniqueKmers(ret[i], 3))
+
+      
+    end
+
+
+    return real
     end=#
+
+    #kmerdist(uniqueKmers(ret[i][j], 3), uniqueKmers(ret[i][j], 3))
+
 
  ### Kmer Location Plot
 #Plots.gr()

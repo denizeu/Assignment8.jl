@@ -4,7 +4,9 @@ authors = ["Kevin Bonham, PhD <kbonham@wellesley.edu>, Deniz Uzun"]
 version = "0.1.0"
 
 [deps]
-BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
+Plotly = "58dd65bb-95f3-509e-9936-c39a10fdeae7"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 
 [compat]
 julia = "1.6"
