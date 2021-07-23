@@ -32,28 +32,28 @@ using Test
         @test bc['G'] == count(x-> x == 'G', seq)
         @test bc['T'] == count(x-> x == 'T', seq)
         @test bc['N'] == count(x-> x == 'N', seq)
-        end # composition
+    end # composition
 
     @testset "gc_content" begin
         @test gc_content("ANTGA") == 0.25 #update method to only count valid bases 
         @test gc_content("cccggg") * 100 == 100.0
         @test gc_content("ATta") == 0.0
         @test_throws Exception gc_content("ATtU")
-        end # gc_content
+    end # gc_content
 
     @testset "complement" begin
         @test complement("ATTAN") == "TAATN"
         @test complement("gcta") == "CGAT"
         @test complement("nnnnnnn") == "NNNNNNN"
         @test_throws Exception complement("APP")
-        end # complement
+    end # complement
 
     @testset "reverse_complement" begin
         @test reverse_complement("ATTAN") == "NTAAT"
         @test reverse_complement("gcta") == "TAGC"
         @test reverse_complement("nnnnnnn") == "NNNNNNN"
         @test_throws Exception reverse_complement("AEC")
-        end # reverse_complement
+    end # reverse_complement
 
     @testset "parse_fasta" begin
         testpath = normpath(joinpath(@__DIR__, "data"))
@@ -74,7 +74,7 @@ using Test
         cov2 = parse_fasta(genomes)
         @test length(cov2[1]) == 8
         @test length(cov2[2]) == 8
-        end #parse_fasta
+    end #parse_fasta
 
     @testset "uniqueKmers" begin
         @test uniqueKmers("ACT", 2) == Set(["AC", "CT"])
@@ -82,7 +82,7 @@ using Test
         @test uniqueKmers("ATGCGATG", 4) ==  Set(["TGCG", "ATGC", "GATG", "CGAT", "GCGA"])
 
         @test_throws Exception uniqueKmers("XAQ", 2)
-        end
+    end
 
     @testset "kmerdist" begin
         @test kmerdist(uniqueKmers("GCGCAT",2), uniqueKmers("ATAT",2)) isa Float64
@@ -122,12 +122,24 @@ using Test
     @testset "pairdist" begin
         testpath = normpath(joinpath(@__DIR__, "data"))
         refine_path = joinpath(testpath, "refined_data.fasta")
+        ex2_path = joinpath(testpath, "ex2.fasta")
 
-        @test pairdist(refine_path) isa Matrix{Float64} 
+        @test pairdist(refine_path) isa Matrix{Float64}
+        @test pairdist(refine_path)[6] == 0.0072727272727273196
+        @test_throws Exception pairdist(ex2_path)
         
     end
 
     @testset "distsort" begin
+        testpath = normpath(joinpath(@__DIR__, "data"))
+        refine_path = pairdist(joinpath(testpath, "refined_data.fasta"))
+        datasort_path = joinpath(testpath, "datasort.fasta")
+
+        
+        @test distsort(refine_path) isa Tuple{Vector{Any}, Vector{Any}, Vector{Any}}
+        @test distsort(refine_path)[1][121] == 0.006805257760790551
+        @test_throws Exception distsort(datasort_path)
+    end
 end
 end
 
