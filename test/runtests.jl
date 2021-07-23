@@ -91,11 +91,14 @@ using Test
         genomes = joinpath(testpath, "cov2_genomes.fasta")
         ex1_path = joinpath(testpath, "ex1.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
+        final_data = joinpath(testpath, "refined_data.fasta")
 
-        ex1 = kmertime(ex1_path)
+        ex1 = kmertime(parse_fasta(ex1_path)[1], parse_fasta(ex1_path)[2], 3)
         @test ex1 isa Tuple
         @test all(x-> x isa String, ex1[1])
         @test all(x-> x isa String, ex1[2])
+
+        @test ex1
     end
 
     @testset "kmertimes" begin

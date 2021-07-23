@@ -425,7 +425,7 @@ end
 
 # ###9. Kmertime Function
 """
-    function kmertime(path)
+    function kmertime(headers, sequences, k)
 
 Takes a dataset and returns three arrays of the unique kmers for early, middle, and late time periods.
 
