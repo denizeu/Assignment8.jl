@@ -553,5 +553,9 @@ end
         
 
 ### Sorted Distance BoxPlot
-
+#=early_dist= distsort(pairdist("data/refined_data.fasta"))[1]
+middle_dist =distsort(pairdist("data/refined_data.fasta"))[2]
+late_dist = distsort(pairdist("data/refined_data.fasta"))[3]
+boxplot(["early", "middle", "late"], [[early_dist], [middle_dist], [late_dist]]
+       , title="Distances vs Time Periods BoxPlot", xlabel="Distances", ylabel="Time Periods")  =#
 
