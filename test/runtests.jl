@@ -77,6 +77,8 @@ using Test
     end #parse_fasta
 
     @testset "uniqueKmers" begin
+        @test uniqueKmers("GCGCAT",2) isa Set{String}
+
         @test uniqueKmers("ACT", 2) == Set(["AC", "CT"])
         @test uniqueKmers("ATC", 2) == Set(["AT", "TC"])
         @test uniqueKmers("ATGCGATG", 4) ==  Set(["TGCG", "ATGC", "GATG", "CGAT", "GCGA"])
@@ -86,8 +88,11 @@ using Test
 
     @testset "kmerdist" begin
         @test kmerdist(uniqueKmers("GCGCAT",2), uniqueKmers("ATAT",2)) isa Float64
+
         @test kmerdist(uniqueKmers("GCGCAT",2), uniqueKmers("ATAT",2)) == 0.8
         @test kmerdist(uniqueKmers("ATCGATG",2), uniqueKmers("GCATACC",2)) == 0.9
+
+        @test_throws Exception kmerdist(uniqueKmers("AZCGLTG",2), uniqueKmers("GCATACC",2))
     end
 
     @testset "kmertime" begin
@@ -113,9 +118,7 @@ using Test
         headers, sequences = parse_fasta("data/refined_data.fasta");
 
         @test kmertimes(headers, sequences) isa Tuple{Int64, Int64, Int64}
-
         @test kmertimes(headers, sequences) == (64, 73, 95)
-
         @test_throws Exception kmertimes(parse_fasta(ex1_path)[1], parse_fasta(ex1_path)[2])
     end
 
