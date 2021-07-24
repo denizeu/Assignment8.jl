@@ -485,9 +485,17 @@ function kmertimes(headers, sequences)
 end
 
 ### Kmertime Plot
-#using Plots #x=time period (early, middle late), y= number of unique kmers of size "k"
-#boxplot(kmertimes("data/genomes_CoV2.fasta")) #creating a histogram for the time periods vs. number of unique kmers
-
+bar(["early" "middle" "late"],
+           [64 73 95],
+           labels = ["early" "middle" "late"],
+           label = "Number of Unique Kmers",
+           title = "Time Period vs. Number of Unique Kmers",
+           xlabel = "Time Period",
+           ylabel = "Number of Unique Kmers",
+           color = [:steelblue :pink :lavender],
+           bg= "beige",
+           legend = :topleft)
+           
 # ###10. Pairwise Distance Function
 """
     function pairdist(path)
