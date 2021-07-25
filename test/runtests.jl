@@ -18,8 +18,6 @@ using Test
         @test composition("BAGGGRRRR") == Dict{Any, Any}('A' => 1, 'G' => 3, 'N' => 5)
         @test composition("BAGGGRRRR") isa Dict
         @test_throws Exception composition("5")
-
-       
     end # composition
 
     @testset "gc_content" begin
