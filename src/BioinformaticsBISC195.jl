@@ -549,9 +549,9 @@ Example
 """
 # i is row-, j is column|
 function pairdist(path) 
-    h = kmertime(headers, sequences, 3)[1]
-    j =  kmertime(headers, sequences, 3)[2]
-    k =  kmertime(headers, sequences, 3)[3]
+    h = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[1]
+    j =  kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[2]
+    k =  kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[3]
     mesh = vcat(h,j,k)
     ret = zeros(36, 36)
     for i in 1:36
