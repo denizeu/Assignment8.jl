@@ -123,7 +123,7 @@ using Test
     end
 
     @testset "pairdist" begin
-        testpath = normpath(joinpath(@__DIR__, "..", "data"))
+        testpath = normpath(joinpath(@__DIR__, "data"))
         refine_path = joinpath(testpath, "refined_data.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
 
