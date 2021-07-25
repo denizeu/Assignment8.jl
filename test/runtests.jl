@@ -119,7 +119,7 @@ using Test
 
         @test kmertimes(headers, sequences) isa Tuple{Int64, Int64, Int64}
         @test kmertimes(headers, sequences) == (64, 73, 95)
-        @test_throws Exception kmertimes(parse_fasta(ex1_path)[1], parse_fasta(ex1_path)[2])
+        @test_throws Exception kmertimes(headers, sequences)
     end
 
     @testset "pairdist" begin
