@@ -101,9 +101,8 @@ using Test
         ex1_path = joinpath(testpath, "ex1.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
         datatry_path= joinpath(testpath, "datatry.fasta")
-    
-
         ex1 = kmertime(parse_fasta(ex1_path)[1], parse_fasta(ex1_path)[2], 3)
+
         @test ex1 isa Tuple
         @test all(x-> x isa String, ex1[1])
         @test all(x-> x isa String, ex1[2])
@@ -115,11 +114,11 @@ using Test
     @testset "kmertimes" begin
         testpath = normpath(joinpath(@__DIR__, "..", "data"))
         ex1_path = joinpath(testpath, "ex1.fasta")
-        headers, sequences = parse_fasta("data/refined_data.fasta");
+        headers, sequences = parse_fasta("../data/refined_data.fasta");
 
         @test kmertimes(headers, sequences) isa Tuple{Int64, Int64, Int64}
         @test kmertimes(headers, sequences) == (64, 73, 95)
-        @test_throws Exception kmertimes(headers, sequences)
+        @test_throws Exception kmertimes(parse_fasta(ex1_path)[1], parse_fasta(ex1_path)[2])
     end
 
     @testset "pairdist" begin
