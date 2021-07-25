@@ -96,7 +96,7 @@ using Test
     end
 
     @testset "kmertime" begin
-        testpath = normpath(joinpath("BioinformaticsBISC195.jl", "data"))
+        testpath = normpath(joinpath("BioinformaticsBISC195.jl", "..", "data"))
         genomes = joinpath(testpath, "cov2_genomes.fasta")
         ex1_path = joinpath(testpath, "ex1.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
@@ -124,8 +124,8 @@ using Test
 
     @testset "pairdist" begin
         testpath = normpath(joinpath(@__DIR__, "data"))
-        ex2_path = joinpath(testpath, "ex2.fasta")
         refine_path = joinpath(testpath,"refined_data.fasta")
+        ex2_path = joinpath(testpath, "ex2.fasta")
 
         @test pairdist(refine_path) isa Matrix{Float64}
         @test pairdist(refine_path)[6] == 0.0072727272727273196
