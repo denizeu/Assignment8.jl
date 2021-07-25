@@ -56,7 +56,7 @@ using Test
     end # reverse_complement
 
     @testset "parse_fasta" begin
-        testpath = normpath(joinpath(@__DIR__, "data"))
+        testpath = normpath(joinpath(@__DIR__, "..", "data"))
         genomes = joinpath(testpath, "cov2_genomes.fasta")
         ex1_path = joinpath(testpath, "ex1.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
@@ -96,7 +96,7 @@ using Test
     end
 
     @testset "kmertime" begin
-        testpath = normpath(joinpath(@__DIR__, "data"))
+        testpath = normpath(joinpath(@__DIR__, "..", "data"))
         genomes = joinpath(testpath, "cov2_genomes.fasta")
         ex1_path = joinpath(testpath, "ex1.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
@@ -113,7 +113,7 @@ using Test
     end
 
     @testset "kmertimes" begin
-        testpath = normpath(joinpath(@__DIR__, "data"))
+        testpath = normpath(joinpath(@__DIR__, "..", "data"))
         ex1_path = joinpath(testpath, "ex1.fasta")
         headers, sequences = parse_fasta("data/refined_data.fasta");
 
@@ -123,7 +123,7 @@ using Test
     end
 
     @testset "pairdist" begin
-        testpath = normpath(joinpath(@__DIR__, "data"))
+        testpath = normpath(joinpath(@__DIR__, "..", "data"))
         refine_path = joinpath(testpath, "refined_data.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
 
@@ -134,7 +134,7 @@ using Test
     end
 
     @testset "distsort" begin
-        testpath = normpath(joinpath(@__DIR__, "data"))
+        testpath = normpath(joinpath(@__DIR__, "..", "data"))
         refine_path = pairdist(joinpath(testpath, "refined_data.fasta"))
         datasort_path = joinpath(testpath, "datasort.fasta")
 
