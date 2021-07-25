@@ -141,7 +141,7 @@ Get the DNA complement of the provided base:
 
 Accepts uppercase or lowercase `String` or `Char`,
 but always returns an uppercase `String` (orig says Char).
-If a valid base is not provided, the function returns "N".
+If a valid base is not provided, the function returns an error.
 
 Examples  
 ≡≡≡≡≡≡≡≡≡≡
@@ -367,7 +367,7 @@ end
 Takes a sequence and a kmer length (k) 
 and returns a list of strings of the unique kmers that appear within the DNA sequence.
 
-Returns an "Invalid base" error if base is not within "AGCT".
+Returns an "Invalid base" error if base is not within "AGCTN".
 
 Example
 ≡≡≡≡≡≡≡≡≡
@@ -403,16 +403,12 @@ end
 """
     function sorting(path)
 
-Takes a path and returns a vector with the sequence lengths greater than 29500.
+Takes a path and returns two vectors one with the sequence lengths greater than 29500 and one with the corresponding headers.
 
 Example
 ≡≡≡≡≡≡≡≡≡
     julia> sorting("data/data_sorting.fasta")
-    4-element Vector{Any}:
-            29903
-            29838
-            29771
-            29782
+    (Any[29903, 29838, 29771, 29782], ["NC_045512.2 |China|Homo sapiens", "MT614596.1 |Egypt|Homo sapiens", "MT669321.1 |India|Homo sapiens", "MT670022.1 |Chile|Homo sapiens"])
 
     julia> g= sorting("data/data_sorting.fasta");
 
@@ -430,7 +426,7 @@ function sorting(path)
 end
 
 ##Histogram for lengths
-#=data= sorting("data/refined_data.fasta");
+#=data= sorting("data/refined_data.fasta")[1];
 histogram(data, bins= 10, label= "Sorted Sequences", xlabel= "Sequence Lengths", ylabel= "Number of Sequences", legend=:topleft)=#
 
 # ### 8. KmerDistance Function

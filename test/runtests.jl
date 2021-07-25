@@ -123,11 +123,11 @@ using Test
 
     @testset "pairdist" begin
         testpath = normpath(joinpath(@__DIR__, "..", "data"))
-        refine_path = joinpath(testpath,"refined_data.fasta")
+        ref_path = joinpath(testpath, "data/refined_data.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
 
         @test pairdist(refine_path) isa Matrix{Float64}
-        @test pairdist(refine_path)[6] == 0.0072727272727273196
+        @test pairdist(refine_path)[7] == 0.007546115148127419
         @test_throws Exception pairdist(ex2_path)
         
     end
