@@ -139,7 +139,7 @@ using Test
 
         
         @test distsort(refine_path) isa Tuple{Vector{Any}, Vector{Any}, Vector{Any}}
-        @test distsort(refine_path)[1][121] == 0.006805257760790551
+        @test distsort(pairdist(refine_path))[2][138] == 0.12328767123287676
         @test_throws Exception distsort(datasort_path)
     end
 end
