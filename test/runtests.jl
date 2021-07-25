@@ -96,7 +96,7 @@ using Test
     end
 
     @testset "kmertime" begin
-        testpath = normpath(joinpath("data"))
+        testpath = normpath(joinpath("BioinformaticsBISC195.jl", "data"))
         genomes = joinpath(testpath, "cov2_genomes.fasta")
         ex1_path = joinpath(testpath, "ex1.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
