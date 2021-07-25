@@ -15,23 +15,11 @@ using Test
     end # normalizeDNA
 
     @testset "composition" begin
-        seq = rand(['A','T','G','C','N'], 20) |> join
-        bc = composition(seq)
-        @test bc isa Dict
+        @test composition("BAGGGRRRR") == Dict{Any, Any}('A' => 1, 'G' => 3, 'N' => 5)
+        @test composition("BAGGGRRRR") isa Dict
+        @test_throws Exception composition("5")
 
-        @test bc['A'] == count(x-> x == 'A', seq)
-        @test bc['C'] == count(x-> x == 'C', seq)
-        @test bc['G'] == count(x-> x == 'G', seq)
-        @test bc['T'] == count(x-> x == 'T', seq)
-        @test bc['N'] == count(x-> x == 'N', seq)
-
-        bc = composition(lowercase(seq))
-
-        @test bc['A'] == count(x-> x == 'A', seq)
-        @test bc['C'] == count(x-> x == 'C', seq)
-        @test bc['G'] == count(x-> x == 'G', seq)
-        @test bc['T'] == count(x-> x == 'T', seq)
-        @test bc['N'] == count(x-> x == 'N', seq)
+       
     end # composition
 
     @testset "gc_content" begin
@@ -139,7 +127,7 @@ using Test
 
         
         @test distsort(refine_path) isa Tuple{Vector{Any}, Vector{Any}, Vector{Any}}
-        @test distsort(pairdist(refine_path))[2][138] == 0.12328767123287676
+        @test distsort(refine_path)[2][138] == 0.12328767123287676
         @test_throws Exception distsort(datasort_path)
     end
 end
