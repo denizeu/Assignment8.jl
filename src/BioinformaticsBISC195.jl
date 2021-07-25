@@ -544,8 +544,7 @@ end
 
 Example
 ≡≡≡≡≡≡≡≡≡
-    julia> headers, sequences = parse_fasta("data/refined_data.fasta");
-
+    julia> 
 """
 # i is row-, j is column|
 function pairdist(path) 
