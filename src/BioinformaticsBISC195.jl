@@ -35,7 +35,7 @@ Examples
     ERROR: key 'L' not found
 
     julia> normalizeDNA(7)
-    ERROR: MethodError
+    ERROR: MethodError: no method matching uppercase(::Int64)
 
     julia> normalizeDNA('G')
     "G"
@@ -154,6 +154,10 @@ Examples
 
     julia> complement("AGCTACC")
     "TCGATGG"
+
+    julia> complement("ZAG")
+    ERROR: KeyError: key 'Z' not found
+
 """
 function complement(sequence)
     sequence = normalizeDNA(sequence)
@@ -281,11 +285,13 @@ end
     
     Example
     ≡≡≡≡≡≡≡≡≡≡
-        julia> lengthcount("data/example.fasta")
-        (44806.2566948847, 45.93354112164542, 0.7767768512386324, 0.00047821765440753630)
+        julia> using Statistics
+        a
+        julia> lengthcount("data/datatry.fasta")
+        (23.666666666666668, 34.93326972004386, 0.3975694444444444, 0.08965799537274553)
 
-        julia> lengthcount("data/example.fasta")
-        (25714.4156356907, 68.78024813244301, 0.3631206332359013, 0.00021470921328415272)
+        julia> lengthcount("data/ex1.fasta")
+        (13.0, 5.656854249492381, 0.46405228758169936, 0.34199935822094457)
     """
 function lengthcount(path)
     lengths= []
@@ -303,7 +309,7 @@ end
 
 # ### Minimum and Maximum Function
 """
-    minMax(path)
+    function minMax(path)
 
     Takes data and returns the minimum and maximum of sequence lengths.
     
@@ -311,6 +317,12 @@ end
     ≡≡≡≡≡≡≡≡≡≡
         julia> minMax("data/ex1.fasta")
         (9, 17)
+
+        julia> minMax("data/datatry.fasta")
+        (3, 64)
+
+        julia> minMax("data/datasort.fasta")
+        (21, 51)
     """
 function minMax(path)
     ret = parse_fasta(path)[2]
@@ -321,15 +333,23 @@ end
 
 # ### Sequence Lengths Function
 """
-    lengthcount(path)
+    function seqlength(path)
 
-    Takes data and returns the sequence lengths.
+    Takes data and returns a vector of its sequence lengths.
 
     Examples
     ≡≡≡≡≡≡≡≡≡≡
         julia> seqlength("data/ex1.fasta")
-        9
-        17
+        2-element Vector{Any}:
+            9
+            17
+
+        julia> seqlength("data/datatry.fasta")
+        3-element Vector{Any}:
+            3
+            64
+            4
+
     """
 function seqlength(path)
     lengths = []
@@ -387,8 +407,17 @@ Takes a path and returns a vector with the sequence lengths greater than 29500.
 
 Example
 ≡≡≡≡≡≡≡≡≡
-    julia> sorting(path)
-    Set{Any} with 5 elements:
+    julia> sorting("data/data_sorting.fasta")
+    4-element Vector{Any}:
+            29903
+            29838
+            29771
+            29782
+
+    julia> g= sorting("data/data_sorting.fasta");
+
+    julia> typeof(g)
+    Vector{Any} (alias for Array{Any, 1})
 
 """
 function sorting(path)
@@ -400,6 +429,9 @@ function sorting(path)
     return (sequences, headers)
 end
 
+##Histogram for lengths
+#=data= sorting("data/refined_data.fasta");
+histogram(data, bins= 10, label= "Sorted Sequences", xlabel= "Sequence Lengths", ylabel= "Number of Sequences", legend=:topleft)=#
 
 # ### 8. KmerDistance Function
 """
@@ -430,18 +462,19 @@ end
 """
     function kmertime(headers, sequences, k)
 
-Takes a dataset and returns three arrays of the unique kmers for early, middle, and late time periods.
+Takes a dataset and returns three vectors of the unique kmers along with corresponding headers for early, middle, and late time periods.
 
 Example
 ≡≡≡≡≡≡≡≡≡
-    julia> kmertime("data/fake_sample_dataset.fasta")
-    early=["ACAT", "AGAT", "CCAT"]
-    middle= ["GGTA", "AAAC", "ATAC"]
-    late= ["CGAT", "ACCA", "TATC"]
+    julia> headers, sequences = parse_fasta("data/datatry.fasta");
 
-    julia> headers, sequences = parse_fasta("data/example.fasta");
+    julia> kmertime(headers, sequences, 3)
+    (Any[Set(["ACT"])], Any[Set(["TGT", "CTT", "GAC", "AGT", "GAA", "TGC", "TTC", "ACC", "ACA", "TAG"  …  "CCA", "TTT", "AGA", "TGG", "ATA", "AAG", "CAC", "AAA", "TTA", "CCG"])], Any[Set(["GGT", "AGG"])])
 
-    julia> kmertime(headers, sequences)
+    julia> j= kmertime(headers, sequences, 3);
+
+    julia> typeof(j)
+    Tuple{Vector{Any}, Vector{Any}, Vector{Any}}
 """
 function kmertime(headers, sequences, k=3) #whatto set k to?
     early= []
@@ -461,6 +494,7 @@ function kmertime(headers, sequences, k=3) #whatto set k to?
     return (early, middle, late)
 end
 
+
 # ###Kmertimes Function
 """
     function kmertimes(path)
@@ -470,11 +504,11 @@ end
 Example
 ≡≡≡≡≡≡≡≡≡
 
-    julia> headers, sequences = parse_fasta("data/example.fasta");
+    julia> headers, sequences = parse_fasta("data/datatry.fasta");
 
     julia> kmertimes(headers, sequences)
 
-    julia> (5, 6, 8)
+    julia> (1, 36, 2)
 """
 function kmertimes(headers, sequences)
     early, middle, late = kmertime(headers, sequences) 
@@ -484,8 +518,13 @@ function kmertimes(headers, sequences)
     return(early_kmers, middle_kmers, late_kmers)
 end
 
-### Kmertime Plot
-bar(["early" "middle" "late"],
+### Kmertimes Plot
+"""
+    Returns a barplot for kmertime: returns one plot for the number of unique kmers in early middle and late time periods. 
+
+    The time periods are represented by bars of 3 different colors corresponding to each different time period.
+"""
+#=bar(["early" "middle" "late"],
            [64 73 95],
            labels = ["early" "middle" "late"],
            label = "Number of Unique Kmers",
@@ -494,7 +533,7 @@ bar(["early" "middle" "late"],
            ylabel = "Number of Unique Kmers",
            color = [:steelblue :pink :lavender],
            bg= "beige",
-           legend = :topleft)
+           legend = :topleft)=#
 
 # ###10. Pairwise Distance Function
 """
@@ -507,13 +546,12 @@ Example
 ≡≡≡≡≡≡≡≡≡
     julia> headers, sequences = parse_fasta("data/refined_data.fasta");
 
-
 """
 # i is row-, j is column|
-function pairdist(path) 
-    h = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 7)[1]
-    j = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 7)[2]
-    k = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 7)[3]
+function pairdist(headers, sequences) 
+    h = kmertime(headers, sequences, 3)[1]
+    j =  kmertime(headers, sequences, 3)[2]
+    k =  kmertime(headers, sequences, 3)[3]
     mesh = vcat(h,j,k)
     ret = zeros(36, 36)
     for i in 1:36

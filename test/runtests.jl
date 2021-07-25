@@ -96,7 +96,7 @@ using Test
     end
 
     @testset "kmertime" begin
-        testpath = normpath(joinpath(@__DIR__, "data"))
+        testpath = normpath(joinpath("data"))
         genomes = joinpath(testpath, "cov2_genomes.fasta")
         ex1_path = joinpath(testpath, "ex1.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
@@ -124,11 +124,11 @@ using Test
 
     @testset "pairdist" begin
         testpath = normpath(joinpath(@__DIR__, "data"))
-        refine_path = joinpath(testpath, "refined_data.fasta")
         ex2_path = joinpath(testpath, "ex2.fasta")
+        headers, sequences = parse_fasta("data/refined_data.fasta");
 
-        @test pairdist(refine_path) isa Matrix{Float64}
-        @test pairdist(refine_path)[6] == 0.0072727272727273196
+        @test pairdist(headers, sequences) isa Matrix{Float64}
+        @test pairdist(headers, sequences)[6] == 0.0072727272727273196
         @test_throws Exception pairdist(ex2_path)
         
     end
