@@ -548,7 +548,7 @@ Example
 
 """
 # i is row-, j is column|
-function pairdist(headers, sequences) 
+function pairdist(path) 
     h = kmertime(headers, sequences, 3)[1]
     j =  kmertime(headers, sequences, 3)[2]
     k =  kmertime(headers, sequences, 3)[3]
