@@ -17,7 +17,7 @@ export minMax
 export pairdist
 export distsort
 
-# ### 1. NormalizeDNA Function
+# ### NormalizeDNA Function
 """
     normalizeDNA(::AbstractString)
 
@@ -51,7 +51,7 @@ function normalizeDNA(sequence)
     return join([rep[c] for c in sequence])
 end
 
-# ### 2. Composition Function
+# ### Composition Function
 """
     composition(sequence)
 
@@ -97,7 +97,7 @@ function composition(sequence)
     return comp
 end
 
-# ### 3. GC_Content Function
+# ### GC_Content Function
 """
     gc_content(sequence)
 
@@ -132,7 +132,7 @@ function gc_content(sequence)
     return (ng + nc) / (ng + nc + nt + na) #divided by sum of AGCT w/ composition function
 end
 
-# ###4. Complement Function
+# ### Complement Function
 """
     complement(base)
 
@@ -181,7 +181,7 @@ function complement(sequence)
     return ret 
 end
 
-# ###5. Reverse Complement Function
+# ### Reverse Complement Function
 """
     reverse_complement(sequence)
 
@@ -450,7 +450,7 @@ function sortingseq(path)
     return (sequences, headers)
 end
 
-# ### 8. KmerDistance Function
+# ### KmerDistance Function
 """
     function kmerdist(set1, set2)
 
@@ -478,7 +478,7 @@ function kmerdist(set1, set2)
     return 1 - (length(intersect(set1, set2))/length(union(set1,set2))) #length of intersection of the sets divided by length of the union
 end
 
-# ###9. Kmertime Function
+# ### Kmertime Function
 """
     function kmertime(headers, sequences, k)
 
@@ -518,7 +518,7 @@ function kmertime(headers, sequences, k=3) #whatto set k to?
 end
 
 
-# ###Kmertimes Function
+# ### Kmertimes Function
 """
     function kmertimes(path)
 
@@ -545,7 +545,7 @@ function kmertimes(headers, sequences, k=3)
     return(early_kmers, middle_kmers, late_kmers) #returns the number of unique kmers in each time period
 end
 
-# ###10. Pairwise Distance Function
+# ### Pairwise Distance Function
 """
     pairdist(path)
     
@@ -580,7 +580,7 @@ function pairdist(path)
     return ret #returns the matrix with the added distance between kmers of sequences
 end
 
-### Distance Sort
+# ### Distance Sort
 """
     distsort(mat)
     
