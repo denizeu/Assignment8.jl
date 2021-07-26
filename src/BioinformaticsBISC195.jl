@@ -21,9 +21,9 @@ export distsort
 """
     normalizeDNA(::AbstractString)
 
-Ensures that a sequence only contains valid bases
-(or `'N'` for unknown bases).
-Returns a String.
+Function that takes a sequence and returns the uppercase and normalized version of it.
+
+Returns an error if invalid bases are encountered.
 
 Examples  
 ≡≡≡≡≡≡≡≡≡≡
@@ -55,9 +55,10 @@ end
 """
     composition(sequence)
 
-Counts the number of each type of base
-in a DNA sequence and returns a Dictionary of how many of each exist
-in the order A, C, G, T.
+Takes a DNA sequence and counts the number of each type of base in the DNA sequence.
+
+Returns a Dictionary of how many of each exist in the order A, C, G, T.
+
 Converts any ambiguous bases not in AGCT to "N".
 
 Examples  
@@ -101,7 +102,8 @@ end
     gc_content(sequence)
 
 Calculates the GC ratio of a DNA sequence.
-The GC ratio is the total number of G and C bases divided by the total length of the sequence.
+
+The GC ratio is the total number of G and C bases divided by the total number of G's, C's, A's, and T's within the sequence.
 
 Examples  
 ≡≡≡≡≡≡≡≡≡≡
@@ -123,7 +125,7 @@ Examples
 """
 function gc_content(sequence)
     comp = composition(sequence)
-    ng = get(comp, 'G', 0) #etc
+    ng = get(comp, 'G', 0) #searches for each of these bases using the composition() function above
     nc = get(comp, 'C', 0)
     na= get(comp, 'A', 0)
     nt= get(comp, 'T', 0)
@@ -141,6 +143,7 @@ Get the DNA complement of the provided base:
 
 Accepts uppercase or lowercase `String` or `Char`,
 but always returns an uppercase `String` (orig says Char).
+
 If a valid base is not provided, the function returns an error.
 
 Examples  
@@ -161,10 +164,10 @@ Examples
 """
 function complement(sequence)
     sequence = normalizeDNA(sequence)
-    ret = ""
+    ret = "" #initialize empty string to place the complements
     for i in 1:length(sequence)
         if sequence[i] == 'A'
-            ret = ret * 'T'
+            ret = ret * 'T' #if position equals A return "T" in that new position as the complement
         elseif sequence[i] == 'T'
             ret = ret * 'A'
         elseif sequence[i] == 'G'
@@ -182,11 +185,10 @@ end
 """
     reverse_complement(sequence)
 
-    Takes a DNA sequence and returns the reverse complement
-    of that sequence.
+Takes a DNA sequence and returns the reverse complement
+of that sequence.
     
-    Takes lowercase or uppercase sequences,
-    but always returns uppercase.
+Takes lowercase or uppercase sequences, but always returns uppercase.
     
     Examples
     ≡≡≡≡≡≡≡≡≡≡
@@ -195,6 +197,9 @@ end
     
         julia> reverse_complement("CCGTAGTA")
         "TACTACGG"
+
+        julia> reverse_complement("ttacg")
+        "CGTAA"
     
         julia> rc = reverse_complement("ACAG");
     
@@ -202,10 +207,10 @@ end
         CTGT
     """
 function reverse_complement(sequence)
-    st= ""
-    sequence =reverse(sequence)
+    st= "" #initialize empty string to place the reverse complements
+    sequence =reverse(sequence) 
     for i in 1:length(sequence)
-        st = st*string(complement(sequence[i]))
+        st = st*string(complement(sequence[i])) 
     end
     return st
 end
@@ -255,13 +260,13 @@ Example
       "this isn't a dna string,but parse it anyway"
 """
 function parse_fasta(path)
-    headers= String[]
-    sequences= []
-    tmp= ""
+    headers= String[] #initialize empty array to hold the headers
+    sequences= [] #initialize empty array to hold sequences
+    tmp= "" 
     for line in eachline(path)
         if startswith(line, '>')
             if !isempty(tmp)
-                push!(sequences, tmp)
+                push!(sequences, tmp) #if it is empty, put the sequences within tmp
             end
             tmp= ""
             push!(headers, SubString(line, 2))
@@ -278,15 +283,13 @@ end
 """
     function lengthcount(path)
 
-    Takes data and returns the mean and standard deviation of sequence lengths and of gc content.
+Takes data and returns the mean and standard deviation of sequence lengths and of gc content within one tuple.
     
-    Takes lowercase or uppercase sequences,
-    but always returns uppercase.
     
     Example
     ≡≡≡≡≡≡≡≡≡≡
         julia> using Statistics
-        a
+    
         julia> lengthcount("data/datatry.fasta")
         (23.666666666666668, 34.93326972004386, 0.3975694444444444, 0.08965799537274553)
 
@@ -296,22 +299,22 @@ end
 function lengthcount(path)
     lengths= []
     counts= []
-    data= parse_fasta(path)
-    for i in data[2]
-        push!(lengths, length(i))
-        gs = count(==('G'), i)
-        cs = count(==('C'), i)
-        GCcontent= (gs + cs)/length(i)
+    data= parse_fasta(path) #parsing the data in order to separate headers and sequences
+    for i in data[2] 
+        push!(lengths, length(i)) 
+        gs = count(==('G'), i) #counts the number of g's
+        cs = count(==('C'), i) #counts the number of c's
+        GCcontent= (gs + cs)/length(i) #finds the GC content by dividing by length of sequence
         push!(counts, GCcontent)
     end
-    return (mean(lengths), std(lengths), mean(counts), std(counts))
+    return (mean(lengths), std(lengths), mean(counts), std(counts)) #using Statistics, takes mean and SD of each calculation
 end
 
 # ### Minimum and Maximum Function
 """
     function minMax(path)
 
-    Takes data and returns the minimum and maximum of sequence lengths.
+Takes data and returns a Tuple of the minimum and maximum of sequence lengths.
     
     Examples
     ≡≡≡≡≡≡≡≡≡≡
@@ -323,6 +326,9 @@ end
 
         julia> minMax("data/datasort.fasta")
         (21, 51)
+
+        julia> typeof(minMax("data/datasort.fasta"))
+        Tuple{Int64, Int64}
     """
 function minMax(path)
     ret = parse_fasta(path)[2]
@@ -333,9 +339,9 @@ end
 
 # ### Sequence Lengths Function
 """
-    function seqlength(path)
+        seqlength(path)
 
-    Takes data and returns a vector of its sequence lengths.
+Takes data and returns a vector of the sequence lengths within the data.
 
     Examples
     ≡≡≡≡≡≡≡≡≡≡
@@ -362,12 +368,12 @@ end
 
 # ### Unique Kmer Function
 """
-    function uniqueKmers(sequence, k)
+    uniqueKmers(sequence, k)
 
 Takes a sequence and a kmer length (k) 
-and returns a list of strings of the unique kmers that appear within the DNA sequence.
+and returns a set of strings of the unique kmers that appear within the DNA sequence.
 
-Returns an "Invalid base" error if base is not within "AGCTN".
+Converts invalid bases to "N" and converts lowercase sequences to uppercase sequences.
 
 Example
 ≡≡≡≡≡≡≡≡≡
@@ -380,12 +386,22 @@ Example
     "GCGA"
 
     julia> uniqueKmers("ATGCN", 2)
-    ERROR: Invalid base N encountered
+    Set{String} with 4 elements:
+    "CN"
+    "AT"
+    "GC"
+    "TG"
 
     julia> uniqueKmers("ACT", 2)
     Set{Any} with 2 elements:
     "AC"
     "CT"
+
+    uniqueKmers("RAcGcN", 4)
+    Set{String} with 3 elements:
+    "NACG"
+    "CGCN"
+    "ACGC"
 """
 function uniqueKmers(sequence, k)
     sequence= normalizeDNA(sequence)
@@ -399,11 +415,13 @@ function uniqueKmers(sequence, k)
     end
     return kmers
 end
+
 # ### Sorting Sequences to 5%
 """
-    function sorting(path)
+    function sortingseq(path)
 
-Takes a path and returns two vectors one with the sequence lengths greater than 29500 and one with the corresponding headers.
+Takes a path (data set) and returns vectors:
+one with the sequence lengths greater than 29500 and one with the corresponding headers.
 
 Example
 ≡≡≡≡≡≡≡≡≡
@@ -416,7 +434,7 @@ Example
     Vector{Any} (alias for Array{Any, 1})
 
 """
-function sorting(path)
+function sortingseq(path)
     sequences = seqlength(path)
     headers = parse_fasta(path)[1]
     check = findall(x->x<29500, sequences)
@@ -425,7 +443,7 @@ function sorting(path)
     return (sequences, headers)
 end
 
-##Histogram for lengths
+##Histogram for lengths: see analysis repo
 #=data= sorting("data/refined_data.fasta")[1];
 histogram(data, bins= 10, label= "Sorted Sequences", xlabel= "Sequence Lengths", ylabel= "Number of Sequences", legend=:topleft)=#
 
@@ -433,7 +451,7 @@ histogram(data, bins= 10, label= "Sorted Sequences", xlabel= "Sequence Lengths",
 """
     function kmerdist(set1, set2)
 
-Takes two kmer sets and returns the distance between the kmer sets.
+Takes two kmer sets and returns the distance between the kmer sets as a Float64.
 Must return a positive number between 0 and 1.
 
 Returns 0.0 for identical sets.
@@ -449,16 +467,22 @@ Example
 
     julia> kmerdist(uniqueKmers("AATA", 4), uniqueKmers("CGGCCCG", 4))
     1.0
+
+    julia> typeof(kmerdist(uniqueKmers("ATCGATG",2), uniqueKmers("GCATACC",2)))
+    Float64
 """
 function kmerdist(set1, set2)
-    return 1 - (length(intersect(set1, set2))/length(union(set1,set2)))
+    return 1 - (length(intersect(set1, set2))/length(union(set1,set2))) #length of intersection of the sets divided by length of the union
 end
 
 # ###9. Kmertime Function
 """
     function kmertime(headers, sequences, k)
 
-Takes a dataset and returns three vectors of the unique kmers along with corresponding headers for early, middle, and late time periods.
+Takes a dataset and returns three vectors:
+of the unique kmers along with corresponding headers for early, middle, and late time periods.
+
+In this data: (and my project: "data/refined_data.fasta"), early: 2019, middle: 2020, late: 2021.
 
 Example
 ≡≡≡≡≡≡≡≡≡
@@ -495,7 +519,8 @@ end
 """
     function kmertimes(path)
 
-    Takes a dataset and returns an array of the number of unique kmers within early, middle, and late time periods.
+Takes a dataset and returns an Tuple of integers for 
+the number of unique kmers within early, middle, and late time periods.
 
 Example
 ≡≡≡≡≡≡≡≡≡
@@ -505,16 +530,19 @@ Example
     julia> kmertimes(headers, sequences)
 
     julia> (1, 36, 2)
+
+    julia> typeof(kmertimes(headers, sequences))
+    Tuple{Int64, Int64, Int64}
 """
 function kmertimes(headers, sequences)
-    early, middle, late = kmertime(headers, sequences) 
-    early_kmers = length(union(early...))
+    early, middle, late = kmertime(headers, sequences) #calling kmertime to separate the sequences by time period: 2019, 2020, 2021
+    early_kmers = length(union(early...)) #calculating length of union of the sets within each time period
     middle_kmers = length(union(middle...))
     late_kmers = length(union(late...))
-    return(early_kmers, middle_kmers, late_kmers)
+    return(early_kmers, middle_kmers, late_kmers) #returns the number of unique kmers in each time period
 end
 
-### Kmertimes Plot
+### Kmertimes Plot: See Analysis Repo
 """
     Returns a barplot for kmertime: returns one plot for the number of unique kmers in early middle and late time periods. 
 
@@ -533,48 +561,71 @@ end
 
 # ###10. Pairwise Distance Function
 """
-    function pairdist(path)
+    pairdist(path)
     
-    Takes a dataset and initiates a matrix for sequences.
-    Returns the distance between pairs of sequences.
+Takes a dataset and initiates a matrix for sequences and
+returns the distance between pairs of sequences.
 
 Example
 ≡≡≡≡≡≡≡≡≡
-    julia> 
+    julia> ("data/refined_data.fasta")[35][1]
+    0.189873417721519
+
+    julia> pairdist("data/refined_data.fasta")[70][1]
+    0.24705882352941178
+
+    julia> typeof(pairdist("data/refined_data.fasta"))
+    Matrix{Float64} (alias for Array{Float64, 2})
 """
-# i is row-, j is column|
+
 function pairdist(path) 
-    h = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[1]
+    h = kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[1] #takes kmertime of headers and sequences and stores them with these letters
     j =  kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[2]
     k =  kmertime(parse_fasta(path)[1], parse_fasta(path)[2], 3)[3]
-    mesh = vcat(h,j,k)
-    ret = zeros(36, 36)
-    for i in 1:36
+    mesh = vcat(h,j,k) #concatenates h, j, k
+    ret = zeros(36, 36) #initiates empty matrix
+    for i in 1:36 
         for j in 1:36
-            i <= j && continue 
-            d = kmerdist(mesh[i], mesh[j])
+            i <= j && continue #skips upper triangle, focuses bottom half of matrix
+            d = kmerdist(mesh[i], mesh[j]) #finds distance between the kmers
             ret[i, j] = d
         end
     end
-    return ret 
+    return ret #returns the matrix with the added distance between kmers of sequences
 end
 
 ### Distance Sort
-function distsort(mat)
-    early_dist = []
+"""
+    distsort(mat)
+    
+Takes a matrix (of my "data/refined_data.fasta") and returns a Tuple of Vectors 
+containing the distances between unique kmers of the sequences, organized by time
+period.
+
+Example
+≡≡≡≡≡≡≡≡≡
+    julia> distsort(pairdist("data/refined_data.fasta"))[3][142]
+    0.16883116883116878
+
+    julia> typeof(distsort(pairdist("data/refined_data.fasta")))
+    Tuple{Vector{Any}, Vector{Any}, Vector{Any}}
+"""
+
+function distsort(mat) #takes matrix as an argument
+    early_dist = [] #3 separate one dimensional arrays initialized for each time period
     middle_dist = []
     late_dist = []
     for i in 1:12
-        for j in 1:12 
-            push!(early_dist, mat[i,j])
+        for j in 1:12 #goes through the early time periods (1:12 are the first 12 in my refined_data)
+            push!(early_dist, mat[i,j]) 
         end
     end
-    for i in 13:24 
+    for i in 13:24 #goes thru the middle time periods
         for j in 13:24
             push!(middle_dist, mat[i,j])
         end
     end
-    for i in 25:36 
+    for i in 25:36 #goes thru the late time periods
         for j in 25:36
             push!(late_dist, mat[i,j])
         end
