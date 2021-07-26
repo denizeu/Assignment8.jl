@@ -284,17 +284,18 @@ end
     function lengthcount(path)
 
 Takes data and returns the mean and standard deviation of sequence lengths and of gc content within one tuple.
-    
+
+Returns a KeyError if sequence is not within "AGCT".
     
     Example
     ≡≡≡≡≡≡≡≡≡≡
         julia> using Statistics
     
-        julia> lengthcount("data/datatry.fasta")
-        (23.666666666666668, 34.93326972004386, 0.3975694444444444, 0.08965799537274553)
-
         julia> lengthcount("data/ex1.fasta")
         (13.0, 5.656854249492381, 0.46405228758169936, 0.34199935822094457)
+
+        julia> lengthcount("data/ex2.fasta")
+        ERROR: KeyError: key 'I' not found
     """
 function lengthcount(path)
     lengths= []
@@ -312,7 +313,7 @@ end
 
 # ### Minimum and Maximum Function
 """
-    function minMax(path)
+    minMax(path)
 
 Takes data and returns a Tuple of the minimum and maximum of sequence lengths.
     
@@ -329,6 +330,9 @@ Takes data and returns a Tuple of the minimum and maximum of sequence lengths.
 
         julia> typeof(minMax("data/datasort.fasta"))
         Tuple{Int64, Int64}
+
+        julia> minMax("data/refined_data.fasta")
+        (29833, 29881)
     """
 function minMax(path)
     ret = parse_fasta(path)[2]
@@ -397,11 +401,14 @@ Example
     "AC"
     "CT"
 
-    uniqueKmers("RAcGcN", 4)
+    julia>uniqueKmers("RAcGcN", 4)
     Set{String} with 3 elements:
     "NACG"
     "CGCN"
     "ACGC"
+
+    julia> typeof(uniqueKmers("RAcGcN", 4))
+    Set{String}
 """
 function uniqueKmers(sequence, k)
     sequence= normalizeDNA(sequence)
@@ -437,15 +444,11 @@ Example
 function sortingseq(path)
     sequences = seqlength(path)
     headers = parse_fasta(path)[1]
-    check = findall(x->x<29500, sequences)
+    check = findall(x->x<29800, sequences)
     deleteat!(sequences, check)
     deleteat!(headers, check)
     return (sequences, headers)
 end
-
-##Histogram for lengths: see analysis repo
-#=data= sorting("data/refined_data.fasta")[1];
-histogram(data, bins= 10, label= "Sorted Sequences", xlabel= "Sequence Lengths", ylabel= "Number of Sequences", legend=:topleft)=#
 
 # ### 8. KmerDistance Function
 """
@@ -534,30 +537,13 @@ Example
     julia> typeof(kmertimes(headers, sequences))
     Tuple{Int64, Int64, Int64}
 """
-function kmertimes(headers, sequences)
-    early, middle, late = kmertime(headers, sequences) #calling kmertime to separate the sequences by time period: 2019, 2020, 2021
+function kmertimes(headers, sequences, k=3)
+    early, middle, late = kmertime(headers, sequences, k) #calling kmertime to separate the sequences by time period: 2019, 2020, 2021
     early_kmers = length(union(early...)) #calculating length of union of the sets within each time period
     middle_kmers = length(union(middle...))
     late_kmers = length(union(late...))
     return(early_kmers, middle_kmers, late_kmers) #returns the number of unique kmers in each time period
 end
-
-### Kmertimes Plot: See Analysis Repo
-"""
-    Returns a barplot for kmertime: returns one plot for the number of unique kmers in early middle and late time periods. 
-
-    The time periods are represented by bars of 3 different colors corresponding to each different time period.
-"""
-#=bar(["early" "middle" "late"],
-           [64 73 95],
-           labels = ["early" "middle" "late"],
-           label = "Number of Unique Kmers",
-           title = "Time Period vs. Number of Unique Kmers",
-           xlabel = "Time Period",
-           ylabel = "Number of Unique Kmers",
-           color = [:steelblue :pink :lavender],
-           bg= "beige",
-           legend = :topleft)=#
 
 # ###10. Pairwise Distance Function
 """
